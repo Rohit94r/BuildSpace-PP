@@ -39,14 +39,7 @@ export async function POST() {
           longestStreak: 0,
           lastActive: new Date(),
         })
-        echo "# BuildSpace-PP" >> README.md
-        git init
-        git add README.md
-        git commit -m "first commit"
-        git branch -M main
-        git remote add origin https://github.com/Rohit94r/BuildSpace-PP.git
-        git push -u origin main
-
+        
         .returning();
 
       return NextResponse.json({
