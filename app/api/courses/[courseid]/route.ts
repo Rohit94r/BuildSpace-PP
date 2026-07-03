@@ -6,7 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ courseId: string }> }, // ← Change type to Promise
+  { params }: { params: Promise<{ courseid: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -14,8 +14,7 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // ✅ Await params to get courseId
-    const { courseId } = await params;
+    const { courseid: courseId } = await params;
 
     const user = await db.query.users.findFirst({
       where: eq(users.clerkId, userId),
