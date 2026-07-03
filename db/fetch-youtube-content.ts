@@ -6,9 +6,6 @@ import { eq } from "drizzle-orm";
 
 dotenv.config({ path: ".env" });
 
-console.log("KEY", process.env.YOUTUBE_API_KEY);
-console.log("ID", process.env.YOUTUBE_CHANNEL_ID);
-
 const youtube = google.youtube({
   version: "v3",
   auth: process.env.YOUTUBE_API_KEY,
@@ -19,8 +16,21 @@ const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID;
 const BATCH_SIZE = 50; // Max items per API call
 
 // Calculate estimated total duration (assuming ~15 min per video)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function calculateDuration(videoCount: number): number {
   return videoCount * 15;
+}
+
+// Determine difficulty based on title keywords
+function determineDifficulty(title: string): string {
+  const lower = title.toLowerCase();
+  if (lower.includes("beginner") || lower.includes("intro") || lower.includes("basics") || lower.includes("fundamentals")) {
+    return "beginner";
+  }
+  if (lower.includes("advanced") || lower.includes("expert") || lower.includes("master") || lower.includes("pro")) {
+    return "advanced";
+  }
+  return "intermediate";
 }
 
 // Calculate course points based on difficulty and video count
@@ -46,7 +56,7 @@ async function fetchChannelPlaylists() {
   let pageToken: string | undefined = undefined;
 
   do {
-    const response = await youtube.playlists.list({
+    const response: { data: { items?: any[]; nextPageToken?: string | null } } = await youtube.playlists.list({
       part: ["snippet", "contentDetails"],
       channelId: CHANNEL_ID,
       maxResults: BATCH_SIZE,
@@ -72,7 +82,7 @@ async function fetchPlaylistVideos(playlistId: string, playlistTitle: string) {
   let pageToken: string | undefined = undefined;
 
   do {
-    const response = await youtube.playlistItems.list({
+    const response: { data: { items?: any[]; nextPageToken?: string | null } } = await youtube.playlistItems.list({
       part: ["snippet", "contentDetails"],
       playlistId: playlistId,
       maxResults: BATCH_SIZE,
@@ -148,7 +158,6 @@ async function seedCoursesFromPlaylists() {
       .values({
         title: title,
         description: description,
-        difficulty: difficulty,
         duration: duration,
         points: points,
         thumbnail: thumbnail,
