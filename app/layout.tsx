@@ -1,30 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-
 import { ClerkProvider } from "@clerk/nextjs";
-import { cn } from "@/lib/utils";
+import { QueryProvider } from "@/components/providers/query-provider";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Buildspace - Learn bu building projects",
-  description: "Gamified Learning platform for developers",
+  title: "BuildSpace - Learn by Building",
+  description: "Gamified learning platform for developers",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <ClerkProvider>
-      <html
-      lang="en"
-      suppressHydrationWarning className={cn("font-sans", inter.variable)}>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ClerkProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </ClerkProvider>
+      </body>
     </html>
-    </ClerkProvider>
-    
   );
 }
